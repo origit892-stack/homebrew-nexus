@@ -1,14 +1,15 @@
 class NexusAgent < Formula
   desc "Autonomous local agent runtime"
   homepage "https://github.com/origit892-stack/nexus"
-  url "https://github.com/origit892-stack/nexus/releases/download/v1.6.0/nexus-homebrew-1.6.0-arm64.tar.gz"
-  sha256 "50c6112fdfa63c1bc6252e5cb12df50fd97efd916edd18eccd126052a5273058"
+  url "https://github.com/origit892-stack/nexus/releases/download/v1.7.0/nexus-homebrew-1.7.0-arm64.tar.gz"
+  sha256 "10ed830e5d3c8e7cf5405478eefdf2f2771d823b8bc6dfd71b394d5c8f26927b"
 
   depends_on "python@3.14"
+  depends_on arch: :arm64
 
   def install
     wheelhouse = pkgshare/"wheelhouse"
-    wheelhouse.install Dir["wheelhouse/*.whl"]
+    wheelhouse.install Dir["*.whl"]
 
     launcher = bin/"nexus"
 
@@ -35,15 +36,11 @@ class NexusAgent < Formula
 
       if [ "$NEED_BOOTSTRAP" -eq 1 ]; then
         mkdir -p "$RUNTIME"
-
         rm -rf "$VENV"
 
         "$PYTHON" -m venv "$VENV"
 
-        "$VENV/bin/python" -m pip install \
-          --no-index \
-          --find-links "$WHEELHOUSE" \
-          "nexus==$VERSION"
+        "$VENV/bin/python" -m pip install           --no-index           --find-links "$WHEELHOUSE"           "nexus==$VERSION"
 
         "$VENV/bin/python" -m pip check
 
@@ -57,6 +54,9 @@ class NexusAgent < Formula
   end
 
   test do
-    assert_match "Nexus #{version}", shell_output("#{bin}/nexus --version")
+    assert_match(
+      "Nexus #{version}",
+      shell_output("#{bin}/nexus --version"),
+    )
   end
 end
