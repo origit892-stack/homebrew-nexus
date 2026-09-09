@@ -4,8 +4,8 @@ class NexusAgent < Formula
   url "https://github.com/origit892-stack/nexus/releases/download/v1.7.0/nexus-homebrew-1.7.0-arm64.tar.gz"
   sha256 "10ed830e5d3c8e7cf5405478eefdf2f2771d823b8bc6dfd71b394d5c8f26927b"
 
-  depends_on "python@3.14"
   depends_on arch: :arm64
+  depends_on "python@3.14"
 
   def install
     wheelhouse = pkgshare/"wheelhouse"
