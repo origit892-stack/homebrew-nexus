@@ -3,8 +3,9 @@ class NexusAgent < Formula
 
   desc "Autonomous local agent runtime"
   homepage "https://github.com/origit892-stack/nexus"
-  url "https://github.com/origit892-stack/nexus/releases/download/v1.6.0/nexus-macos-1.6.0.tar.gz"
-  sha256 "68036655924dd8408cc3f2b7e957697766afff80b0549b42c17c9317d69a0eec"
+  url "https://github.com/origit892-stack/nexus/releases/download/v1.6.0/nexus-homebrew-1.6.0-arm64.tar.gz"
+  sha256 "50c6112fdfa63c1bc6252e5cb12df50fd97efd916edd18eccd126052a5273058"
+  version "1.6.0"
 
   depends_on "python@3.14"
 
@@ -12,20 +13,29 @@ class NexusAgent < Formula
     venv = virtualenv_create(
       libexec,
       formula_opt_bin("python@3.14")/"python3.14",
+      without_pip: false,
     )
 
-    wheel = Dir[
-      "wheel/nexus-#{version}-*.whl",
-    ].first
+    wheels = Dir["wheelhouse/*.whl"].sort
+    odie "Nexus wheelhouse missing" if wheels.empty?
 
-    odie "Nexus wheel missing" unless wheel
-
-    venv.pip_install wheel
+    system       venv.root/"bin/python",
+      "-m",
+      "pip",
+      "install",
+      "--no-index",
+      "--find-links",
+      buildpath/"wheelhouse",
+      "nexus==#{version}"
 
     bin.install_symlink libexec/"bin/nexus"
   end
 
   test do
     assert_match "Nexus #{version}", shell_output("#{bin}/nexus --version")
+
+    system       libexec/"bin/python",
+      "-c",
+      "import yaml, typer, rich, openai, rapidfuzz, prompt_toolkit, playwright"
   end
 end
